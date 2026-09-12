@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <defs>
+    <!-- Base Shadow -->
+    <radialGradient id="accShadow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0.45"/>
+      <stop offset="65%" stop-color="#000000" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+    <!-- Silk Satin Bonnet Gradient (Volumetric Silk Velvet) -->
+    <radialGradient id="satinSilk" cx="45%" cy="38%" r="62%">
+      <stop offset="0%" stop-color="#FFA8C4"/>
+      <stop offset="30%" stop-color="#FB3765"/>
+      <stop offset="70%" stop-color="#9C1438"/>
+      <stop offset="100%" stop-color="#2D0613"/>
+    </radialGradient>
+    <!-- Silk Satin Highlights -->
+    <linearGradient id="silkSheen" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.75"/>
+      <stop offset="50%" stop-color="#FFD6E2" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#FB3765" stop-opacity="0"/>
+    </linearGradient>
+    <!-- Luxury Wooden Paddle Brush Handle -->
+    <linearGradient id="brushWood" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FCE1A9"/>
+      <stop offset="40%" stop-color="#C89D3C"/>
+      <stop offset="80%" stop-color="#8A5A1C"/>
+      <stop offset="100%" stop-color="#4A2A08"/>
+    </linearGradient>
+    <!-- Cushion Pad -->
+    <linearGradient id="cushionPad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#291220"/>
+      <stop offset="100%" stop-color="#0F040B"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Base Floor Shadow -->
+  <ellipse cx="50" cy="89" rx="35" ry="7" fill="url(#accShadow)"/>
+
+  <!-- 3D SILK SATIN BONNET (Back Left Object) -->
+  <!-- Bonnet Main Volumetric Dome -->
+  <path d="M16 66 C10 44, 25 24, 46 22 C66 20, 80 34, 76 56 C74 70, 52 74, 34 73 C22 72, 18 70, 16 66 Z" fill="url(#satinSilk)"/>
+
+  <!-- Silk Pleats and Folds (3D Creases) -->
+  <path d="M22 62 C26 46, 38 34, 48 32" stroke="#FF99B8" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.65"/>
+  <path d="M30 68 C36 50, 48 40, 60 38" stroke="#FF99B8" stroke-width="1.8" stroke-linecap="round" fill="none" opacity="0.6"/>
+  <path d="M46 72 C52 58, 62 48, 72 48" stroke="#730C26" stroke-width="2.2" stroke-linecap="round" fill="none" opacity="0.75"/>
+
+  <!-- Specular Silk Luster Arc (Shiny Silk Light Catch) -->
+  <path d="M34 26 C44 24, 56 26, 64 34" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" fill="none" opacity="0.7"/>
+  <ellipse cx="48" cy="30" rx="14" ry="5" fill="url(#silkSheen)" transform="rotate(-10, 48, 30)"/>
+
+  <!-- Bonnet Elastic Ruched Band at bottom rim -->
+  <path d="M16 66 C19 72, 34 76, 50 74 C62 72, 72 68, 75 62" stroke="#FFA8C4" stroke-width="3" stroke-linecap="round" fill="none"/>
+  <path d="M16 66 C19 72, 34 76, 50 74 C62 72, 72 68, 75 62" stroke="#5C061B" stroke-width="1.2" stroke-dasharray="3 3" stroke-linecap="round" fill="none"/>
+
+  <!-- LUXURY PADDLE BRUSH (Resting at an angle in front) -->
+  <!-- Brush Handle: extends from (62,56) down to (85,84) -->
+  <path d="M63 58 L81 81 C83 83, 86 83, 87 81 C89 79, 88 76, 86 74 L68 53 Z" fill="url(#brushWood)"/>
+  <!-- Handle Grip Rose-Gold Ring Accent -->
+  <line x1="75" y1="71" x2="79" y2="67" stroke="#FCE1A9" stroke-width="1.5"/>
+
+  <!-- Brush Oval Paddle Head: center ~ (52, 48), tilted 45 deg -->
+  <ellipse cx="52" cy="48" rx="16" ry="11" fill="url(#brushWood)" stroke="#FCE1A9" stroke-width="1" transform="rotate(-38, 52, 48)"/>
+
+  <!-- Soft Cushion Pin Pad inside Paddle -->
+  <ellipse cx="52" cy="48" rx="13" ry="8.5" fill="url(#cushionPad)" transform="rotate(-38, 52, 48)"/>
+
+  <!-- Golden Cushion Pin Bristles with Ball Tips -->
+  <!-- Row 1 -->
+  <circle cx="44" cy="43" r="1.1" fill="#FCE1A9"/>
+  <line x1="44" y1="43" x2="43" y2="40" stroke="#FCE1A9" stroke-width="0.8"/>
+  <circle cx="43" cy="40" r="0.9" fill="#FFF"/>
+
+  <circle cx="49" cy="40" r="1.1" fill="#FCE1A9"/>
+  <line x1="49" y1="40" x2="48" y2="37" stroke="#FCE1A9" stroke-width="0.8"/>
+  <circle cx="48" cy="37" r="0.9" fill="#FFF"/>
+
+  <circle cx="55" cy="37" r="1.1" fill="#FCE1A9"/>
+  <line x1="55" y1="37" x2="54" y2="34" stroke="#FCE1A9" stroke-width="0.8"/>
+  <circle cx="54" cy="34" r="0.9" fill="#FFF"/>
+
+  <!-- Center Row -->
+  <circle cx="46" cy="49" r="1.1" fill="#FCE1A9"/>
+  <line x1="46" y1="49" x2="45" y2="46" stroke="#FCE1A9" stroke-width="0.8"/>
+  <circle cx="45" cy="46" r="0.9" fill="#FFF"/>
+
+  <circle cx="52" cy="46" r="1.1" fill="#FCE1A9"/>
+  <line x1="52" y1="46" x2="51" y2="43" stroke="#FCE1A9" stroke-width="0.8"/>
+  <circle cx="51" cy="43" r="0.9" fill="#FFF"/>
+
+  <circle cx="58" cy="43" r="1.1" fill="#FCE1A9"/>
+  <line x1="58" y1="43" x2="57" y2="40" stroke="#FCE1A9" stroke-width="0.8"/>
+  <circle cx="57" cy="40" r="0.9" fill="#FFF"/>
+
+  <!-- Floating Satin Sparkles -->
+  <path d="M22 28 Q22 31 25 31 Q22 31 22 34 Q22 31 19 31 Q22 31 22 28 Z" fill="#FCE1A9"/>
+  <path d="M80 38 Q80 40 82 40 Q80 40 80 42 Q80 40 78 40 Q80 40 80 38 Z" fill="#FFC2D4"/>
+</svg>

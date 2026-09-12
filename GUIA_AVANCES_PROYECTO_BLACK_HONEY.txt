@@ -1,0 +1,341 @@
+================================================================================
+GUIA MAESTRA DE AVANCES Y ESTADO DEL PROYECTO: BLACK HONEY HAIR CARE ECOMMERCE
+================================================================================
+Fecha de generacion: Septiembre 2026
+Destinatario: Antigravity AI / Desarrollador de relevo
+Directorio base del proyecto:
+c:\Users\sophi\Downloads\Black Honey Hair Care\Website - Ecommerce PRO\Black Honey Hair Care Ecommerce\
+Servidor local activo: http://localhost:8081
+ 
+================================================================================
+1. RESUMEN EJECUTIVO
+================================================================================
+Black Honey Hair Care es una tienda online de alta gama para productos capilares
+botanicos a base de melaza pura de cana, romero silvestre, oleos ancestrales
+del Pacifico y saten de seda.
+
+El proyecto es una Single-Page Application (SPA) ultra-optimizada con renderizado
+reactivo reactless/zero-latency utilizando el motor DirectCore (sintaxis sc-if,
+sc-for, vinculacion declarativa), complementada con CSS vanilla altamente
+estructurado y sin dependencias pesadas de frameworks externos (sin cuellos de
+botella de CDN).
+
+Toda la informacion de productos, fotos, textos bilingues (ES/EN), monedas
+(COP, CAD, USD), tracking de envios y checkout estan 100% operativos localmente.
+
+================================================================================
+2. COMANDOS CLAVE PARA EL ENTORNO DE DESARROLLO
+================================================================================
+a) Iniciar el servidor local:
+   node server.js
+   -> Corre en http://localhost:8081 (sirve index.html, tienda.html y assets)
+
+b) Validar la sintaxis y balance de plantillas:
+   node scratch/validate_checkout.js
+   -> Verifica:
+      - Balance exacto de <sc-if> y </sc-if>
+      - Balance exacto de <sc-for> y </sc-for>
+      - Ausencia total de referencias heredadas de marcas anteriores (Competidor, etc.)
+      - Validacion sintactica de codigo JavaScript en index.html y tienda.html
+
+================================================================================
+3. MAPA DE ARCHIVOS CLAVE
+================================================================================
+├── index.html                   -> Pagina de aterrizaje principal (Landing oficial)
+│                                  Hero, Bestsellers (Editorial/Galeria), Quiz Capilar,
+│                                  Antes/Despues Slider, Ficha Tecnica (Quick View),
+│                                  Tracking Simulator, Checkout Express.
+├── tienda.html                  -> Catalogo completo de productos con filtros por
+│                                  categoria, buscador en tiempo real, ordenamiento
+│                                  y vistas Galeria / Editorial.
+├── server.js                    -> Servidor estatico Node.js (puerto 8081).
+├── support.js                   -> Script auxiliar de soporte y componentes.
+├── assets/
+│   ├── react.production.min.js  -> React 18 local (sin dependencias unpkg).
+│   ├── react-dom.production.min.js -> ReactDOM 18 local.
+│   ├── seamless-nav.js          -> Transiciones y navegacion fluida.
+│   └── extracted_bh/            -> 111 assets originales extraidos en alta resolucion:
+│       ├── productos/           -> 83 fotos de estudio de los 19 productos y modelos.
+│       ├── hero_banners/        -> Banners principales de bienvenida (Desktop y Mobile).
+│       ├── colecciones/         -> Portadas de categorias y colecciones.
+│       ├── banners_secciones/   -> Banners editoriales, suscripcion y branding.
+│       ├── branding/            -> Logo oficial transparente en 3840px.
+│       └── CATALOGO_IMAGENES.md -> Indice documental completo de imagenes.
+└── scratch/
+    ├── validate_checkout.js     -> Script de validacion de integridad de plantillas y JS.
+    └── apply_full_product_photos.js -> Script de actualizacion y mapeo fotográfico.
+
+================================================================================
+4. HITOS Y AVANCES REALIZADOS HASTA EL MOMENTO
+================================================================================
+
+HITO 1: INDEPENDENCIA DE RED Y ELIMINACION DE DEPENDENCIAS EXTERNAS
+--------------------------------------------------------------------------------
+- Se desacoplaron completamente las librerias React y ReactDOM de unpkg.
+- Se descargaron e integraron copias locales minificadas en assets/.
+- Se creo un interceptor de recursos (window.__resources) que elimina el retardo
+  de red inicial y garantiza carga instantanea offline o local.
+
+HITO 2: PURGA TOTAL DE REFERENCIAS HEREDADAS
+--------------------------------------------------------------------------------
+- Se realizo un barrido completo de la marca anterior (Competidor) en todo el HTML,
+  CSS y JS de index.html y tienda.html.
+- Se verifico con scripts de regex que el nombre 'Competidor' tiene 0 ocurrencias.
+
+HITO 3: EXTRACCION Y LOCALIZACION DE 111 ASSETS ORIGINALES DE ALTA RESOLUCION
+--------------------------------------------------------------------------------
+- Se descargaron 90.69 MB de material fotografico original de la tienda oficial
+  (blackhoneyhaircare.com), eliminando los limites de compresion de Shopify.
+- Todo quedo archivado y clasificado en assets/extracted_bh/.
+- Se genero el documento assets/extracted_bh/CATALOGO_IMAGENES.md con la tabla de
+  cada archivo, peso, resolucion nativa y descripcion.
+
+HITO 4: SISTEMA DE COLOR Y DISENO CORPORATIVO OBSIDIAN & ROSE LUXURY
+--------------------------------------------------------------------------------
+- Se armonizo toda la seccion de productos y la landing con la paleta de lujo
+  solicitada por el cliente:
+  * Fondos: Obsidiana calida oscura (#0F060C, #160C13, #22101D).
+  * Bordes y brillos: Rosa corporativo (#FB3765) con degradados satinados.
+  * Acentos secundarios: Toques dorados suaves (#D9B679, #F1DEB8) en insignias,
+    estrellas de calificacion y botones de verificacion de salon.
+  * Tipografias: Outfit para titulares contundentes, DM Sans para textos de
+    lectura, Material Symbols Rounded para iconografia.
+
+HITO 5: MODULO INTERACTIVO DE DIAGNOSTICO CAPILAR VIRTUAL (HAIR QUIZ)
+--------------------------------------------------------------------------------
+- Diagnostico capilar en 3 pasos que evalua tipo de hebra (ondulada, rizada,
+  afro o danada), nivel de porosidad y objetivo principal (reconstruccion,
+  control caida o definicion).
+- Calcula la recomendacion exacta de rutina y kit Black Honey con boton directo
+  para anadir la rutina completa al carrito.
+
+HITO 6: SLIDER INTERACTIVO ANTES / DESPUES DE RIZOS
+--------------------------------------------------------------------------------
+- Componente de comparacion deslizante (split-view) con rango interactivo
+  del 0% al 100% que demuestra la transformacion capilar:
+  * Lado Antes: cabello seco, poroso y sin definicion.
+  * Lado Despues: rizos definidos, reforzados, hidratados y con brillo espejo
+    (respetando y potenciando el patron de rizo natural, sin alisarlo).
+
+HITO 7: SIMULADOR DE SEGUIMIENTO EN VIVO (ORDER TRACKING)
+--------------------------------------------------------------------------------
+- Flujo interactivo de estados de pedido con barra horizontal navegable:
+  1. Pedido Recibido -> 2. Laboratorio Cali -> 3. Despachado -> 4. En Ruta -> 5. Entregado.
+- Muestra guia oficial, transportadora (Coordinadora, Servientrega, DHL),
+  linea de tiempo de eventos y boton de copiado rapido para WhatsApp o SMS.
+
+HITO 8: CORRECCION DE OVERFLOW Y DOBLE SCROLLBAR EN MODALES
+--------------------------------------------------------------------------------
+- Se corrigio el problema de doble scrollbar en los modales de Checkout Express
+  y Ficha Tecnica mediante la clase .checkout-modal-open que bloquea el scroll
+  del body/html mientras el overlay esta desplegado, con scrollbar estilizada
+  en un solo contenedor interior.
+
+HITO 9: ELIMINACION DE OVERLAY OSCURO Y REGLAS DE HOVER DESTRUCTIVAS (ULTIMO HITO)
+--------------------------------------------------------------------------------
+- Problema resuelto: Existia una regla CSS con mix-blend-mode: multiply y un
+  efecto en hover que ocultaba la imagen primaria (opacity: 0) y mostraba una
+  capa oscura, lo que causaba que el producto (por ejemplo, el tarro de Melaza)
+  se viera manchado de un color marron/vino oscuro sobre el fondo de la tarjeta.
+- Correccion aplicada:
+  * Se elimino completamente mix-blend-mode: multiply en index.html y tienda.html.
+  * Se establecio mix-blend-mode: normal !important en todas las imagenes.
+  * Se elimino la regla que forzaba opacity: 0 en hover.
+  * Al pasar el cursor por la tarjeta, solo se aplica un suave micro-zoom
+    (scale(1.025)), manteniendo la nitidez, los colores reales y la luz natural.
+
+HITO 10: DESPLIEGUE FULL-WIDTH Y SIN ENCAPSULAR DE FOTOGRAFIAS DE PRODUCTO
+--------------------------------------------------------------------------------
+- Se elimino el padding restrictivo (padding: 28px 24px) y las dimensiones
+  limitadas (max-width: 86%) del contenedor .prod-img-stage.
+- El contenedor ahora ocupa el 100% del ancho y alto disponible en su columna:
+  width: 100%; min-height: clamp(420px, 46vw, 540px); padding: 0 !important;
+- La fotografia se renderiza con:
+  width: 100%; height: 100%; object-fit: cover; object-position: center 25%;
+- Esto permite desplegar las fotos de estudio completas de las modelos con el
+  producto y los rizos definidos en formato editorial de revista de lujo.
+
+HITO 11: MAPEO DE TODAS LAS 83 FOTOS DE ESTUDIO Y SELECTOR DE FOTOS EN TARJETAS
+--------------------------------------------------------------------------------
+- Se vincularon todas las fotografias existentes en assets/extracted_bh/productos/
+  a cada uno de los 19 productos en la estructura PRODUCTS (propiedad gallery: [...]).
+- En las tarjetas de producto (tanto vista Editorial como Galeria en index.html
+  y tienda.html), se integro una barra de miniaturas flotante (estilo cristal
+  con backdrop-filter: blur) con flechas anterior/siguiente.
+- El cliente puede hacer clic en cualquier miniatura o flecha para cambiar al instante
+  la fotografia activa de la tarjeta sin salir de la vista principal.
+- Al abrir la Ficha Tecnica (Ver Ficha / Quick View), la foto activa seleccionada
+  se refleja de inmediato en el modal con la galeria de alta definicion.
+
+================================================================================
+5. INVENTARIO COMPLETO DE PRODUCTOS Y SUS FOTOGRAFIAS (19 PRODUCTOS)
+================================================================================
+
+1. melaza (Tratamiento Reparador de Melaza - 300ml / 500ml)
+   - Hero: assets/extracted_bh/productos/tratamiento_nutritivo_melaza_de_cana_foto_2_de_3.jpg (Modelo con tarro en cabeza)
+   - Galeria (4 fotos):
+     * tratamiento_nutritivo_melaza_de_cana_foto_2_de_3.jpg
+     * tratamiento_nutritivo_melaza_de_cana_foto_3_de_3.jpg (Modelo de espalda, rizos largos)
+     * kit_cabello_sano_fuerte_foto_1_de_4.png
+     * assets/p-tratamiento-melaza.png
+
+2. shampoo (Shampoo Nutritivo Melaza & Miel - 300ml / 500ml)
+   - Hero: assets/extracted_bh/productos/shampoo_nutritivo_herbal_foto_2_de_3.jpg
+   - Galeria (3 fotos):
+     * shampoo_nutritivo_herbal_foto_2_de_3.jpg (Modelo con frasco y rizos)
+     * shampoo_nutritivo_herbal_foto_3_de_3.jpg
+     * assets/p-shampoo-nutritivo.png
+
+3. acond (Acondicionador Hidratante Melaza - 300ml / 500ml)
+   - Hero: assets/extracted_bh/productos/acondicionador_2_en_1_foto_1_de_2.jpg
+   - Galeria (3 fotos):
+     * acondicionador_2_en_1_foto_1_de_2.jpg
+     * acondicionador_2_en_1_foto_2_de_2.jpg
+     * assets/p-acondicionador.png
+
+4. tonico (Tonico Capilar de Crecimiento - 120ml)
+   - Hero: assets/extracted_bh/productos/tonico_herbal_capilar_foto_2_de_8.jpg
+   - Galeria (7 fotos):
+     * tonico_herbal_capilar_foto_2_de_8.jpg
+     * tonico_herbal_capilar_foto_4_de_8.jpg
+     * tonico_herbal_capilar_foto_5_de_8.jpg
+     * tonico_herbal_capilar_foto_6_de_8.jpg
+     * tonico_herbal_capilar_foto_7_de_8.jpg
+     * tonico_herbal_capilar_foto_8_de_8.jpg
+     * assets/p-tonico.png
+
+5. aceite (Aceite Herbal de Nutricion - 30ml / 60ml)
+   - Hero: assets/extracted_bh/productos/aceite_herbal_macerado_foto_2_de_6.jpg
+   - Galeria (6 fotos):
+     * aceite_herbal_macerado_foto_2_de_6.jpg
+     * aceite_herbal_macerado_foto_3_de_6.jpg
+     * aceite_herbal_macerado_foto_4_de_6.jpg
+     * aceite_herbal_macerado_foto_5_de_6.jpg
+     * aceite_herbal_macerado_foto_6_de_6.png
+     * assets/p-aceite-herbal.png
+
+6. crema (Crema para Peinar Cana & Chonta - 300ml / 500ml)
+   - Hero: assets/extracted_bh/productos/crema_para_peinar_cana_chonta_foto_2_de_3.jpg
+   - Galeria (3 fotos):
+     * crema_para_peinar_cana_chonta_foto_2_de_3.jpg
+     * crema_para_peinar_cana_chonta_foto_3_de_3.jpg
+     * assets/p-crema-peinar.png
+
+7. kit-premium (Kit Premium Black Honey - Rutina 6 Pasos)
+   - Hero: assets/extracted_bh/productos/kit_cabello_sano_fuerte_premium_con_aceite_foto_1_.jpg
+   - Galeria (4 fotos):
+     * kit_cabello_sano_fuerte_premium_con_aceite_foto_1_.jpg
+     * kit_cabello_sano_fuerte_premium_con_aceite_foto_2_.jpg
+     * kit_cabello_sano_fuerte_premium_con_aceite_foto_3_.jpg
+     * assets/p-kit-premium.png
+
+8. kit-sano (Kit Cabello Sano y Fuerte - Trio Esencial)
+   - Hero: assets/extracted_bh/productos/kit_cabello_sano_fuerte_foto_1_de_4.png
+   - Galeria (5 fotos):
+     * kit_cabello_sano_fuerte_foto_1_de_4.png
+     * kit_cabello_sano_fuerte_foto_2_de_4.jpg
+     * kit_cabello_sano_fuerte_foto_3_de_4.jpg
+     * kit_cabello_sano_fuerte_foto_4_de_4.jpg
+     * assets/p-kit-sano-fuerte.png
+
+9. kit-crec (Kit Crecimiento Intensivo - Tonico + Aceite + Shampoo)
+   - Hero: assets/extracted_bh/productos/kit_crecimiento_fortalecimiento_foto_1_de_5.jpg
+   - Galeria (5 fotos):
+     * kit_crecimiento_fortalecimiento_foto_1_de_5.jpg
+     * kit_crecimiento_fortalecimiento_foto_2_de_5.jpg
+     * kit_crecimiento_fortalecimiento_foto_3_de_5.jpg
+     * kit_crecimiento_fortalecimiento_foto_4_de_5.jpg
+     * assets/p-kit-crecimiento.png
+
+10. kit-def (Kit Definicion Rizos de Oro - Crema + Acondicionador + Aceite)
+    - Hero: assets/extracted_bh/productos/kit_definicion_perfecta_foto_1_de_3.jpg
+    - Galeria (4 fotos):
+      * kit_definicion_perfecta_foto_1_de_3.jpg
+      * kit_definicion_perfecta_foto_2_de_3.jpg
+      * kit_definicion_perfecta_foto_3_de_3.jpg
+      * assets/p-kit-definicion.png
+
+11. kit-duo (Kit Duo Esencial - Shampoo + Acondicionador)
+    - Hero: assets/extracted_bh/productos/kit_shampoo_acondicionador_2_en_1_foto_1_de_3.jpg
+    - Galeria (4 fotos):
+      * kit_shampoo_acondicionador_2_en_1_foto_1_de_3.jpg
+      * kit_shampoo_acondicionador_2_en_1_foto_2_de_3.jpg
+      * kit_shampoo_acondicionador_2_en_1_foto_3_de_3.jpg
+      * assets/p-kit-duo.png
+
+12. travel (Travel Kit Black Honey - 4 Minis 60ml)
+    - Hero: assets/extracted_bh/productos/travel_kit_foto_1_de_5.jpg
+    - Galeria (6 fotos):
+      * travel_kit_foto_1_de_5.jpg
+      * travel_kit_foto_2_de_5.jpg
+      * travel_kit_foto_3_de_5.jpg
+      * travel_kit_foto_4_de_5.jpg
+      * travel_kit_foto_5_de_5.jpg
+      * assets/p-travel-kit.png
+
+13. curly (Curly Brush BH - Cepillo 9 Hileras)
+    - Hero: assets/extracted_bh/productos/curly_brush_bh_foto_1_de_7.jpg
+    - Galeria (8 fotos):
+      * curly_brush_bh_foto_1_de_7.jpg a foto_7_de_7.jpg
+      * assets/p-curly-brush.png
+
+14. shbrush (Shampoo Brush - Masajeador de Silicona)
+    - Hero: assets/extracted_bh/productos/shampoo_brush_foto_2_de_5.jpg
+    - Galeria (6 fotos):
+      * shampoo_brush_foto_1_de_5.jpg a foto_5_de_5.jpg
+      * assets/p-shampoo-brush.png
+
+15. cepillo3 (Cepillo 3 Hileras Desenredante)
+    - Hero: assets/extracted_bh/productos/cepillo_3_hileras_foto_1_de_2.jpg
+    - Galeria (3 fotos):
+      * cepillo_3_hileras_foto_1_de_2.jpg
+      * cepillo_3_hileras_foto_2_de_2.jpg
+      * assets/p-cepillo-3-hileras.png
+
+16. clips (Clips de Seccionamiento Profesional - Pack x4)
+    - Hero: assets/extracted_bh/productos/clips_para_el_cabello_foto_2_de_5.jpg
+    - Galeria (5 fotos):
+      * clips_para_el_cabello_foto_1_de_5.jpg a foto_5_de_5.jpg
+      * assets/p-clips.png
+
+17. funda (Funda de Saten para Almohada con Cierre Oculto)
+    - Hero: assets/extracted_bh/productos/funda_de_saten_foto_2_de_4.jpg
+    - Galeria (5 fotos):
+      * funda_de_saten_foto_1_de_4.jpg a foto_4_de_4.jpg
+      * assets/p-funda-saten.png
+
+18. gorros (Gorro de Saten Reversible Premium)
+    - Hero: assets/extracted_bh/productos/gorros_de_saten_foto_1_de_9.jpg
+    - Galeria (10 fotos):
+      * gorros_de_saten_foto_1_de_9.jpg a foto_9_de_9.jpg
+      * assets/p-gorros-saten.png
+
+19. scrunch (Scrunchies de Saten Black Honey - Pack x3)
+    - Hero: assets/extracted_bh/productos/scrunchies_de_saten_foto_1_de_11.jpg
+    - Galeria (12 fotos):
+      * scrunchies_de_saten_foto_1_de_11.jpg a foto_11_de_11.jpg
+      * assets/p-scrunchies.png
+
+================================================================================
+6. ESTADO ACTUAL Y VALIDACION TECNICA
+================================================================================
+- Validacion ejecutada con 'node scratch/validate_checkout.js':
+  * index.html: sc-if (33/33), sc-for (26/26), 0 errores sintacticos, 0 Competidor.
+  * tienda.html: sc-if (27/27), sc-for (23/23), 0 errores sintacticos, 0 Competidor.
+- Servidor local activo en puerto 8081 respondiendo HTTP 200 con todos los
+  cambios en tiempo real.
+
+================================================================================
+7. PROXIMOS PASOS / SUGERENCIAS PARA LA SIGUIENTE SESION
+================================================================================
+1. Si el usuario solicita agregar pasarela de pago directa (Wompi, MercadoPago
+   o Stripe) ademas de WhatsApp Checkout, las funciones estan preparadas en
+   openCheckoutOverlay() y openCo().
+2. Si el usuario pide conectar base de datos o backend para pedidos reales,
+   se puede expandir server.js con endpoints REST (/api/orders, /api/tracking).
+3. Todas las fotos originales de alta resolucion estan preservadas en
+   assets/extracted_bh/ si se requiere crear banners adicionales o campanas.
+
+================================================================================
+FIN DE LA GUIA MAESTRA
+================================================================================

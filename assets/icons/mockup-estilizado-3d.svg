@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <defs>
+    <!-- Base Shadow -->
+    <radialGradient id="sprayShadow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0.4"/>
+      <stop offset="65%" stop-color="#000000" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+    <!-- Bottle Gradient -->
+    <linearGradient id="sprayBody" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#2D1424"/>
+      <stop offset="22%" stop-color="#FF628B"/>
+      <stop offset="50%" stop-color="#FB3765"/>
+      <stop offset="80%" stop-color="#9C1738"/>
+      <stop offset="100%" stop-color="#1F0816"/>
+    </linearGradient>
+    <!-- 3D Curl Spiral Ribbon (Gold & Rose Gradient) -->
+    <linearGradient id="curlFront" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFF2C2"/>
+      <stop offset="35%" stop-color="#F3C969"/>
+      <stop offset="70%" stop-color="#FB3765"/>
+      <stop offset="100%" stop-color="#D4AF37"/>
+    </linearGradient>
+    <linearGradient id="curlBack" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#73112A"/>
+      <stop offset="100%" stop-color="#3D1220"/>
+    </linearGradient>
+    <!-- Mist Trigger Head -->
+    <linearGradient id="mistHead" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#381B2B"/>
+      <stop offset="50%" stop-color="#180712"/>
+      <stop offset="100%" stop-color="#0A0208"/>
+    </linearGradient>
+    <!-- Golden Metallic Ring -->
+    <linearGradient id="sprayGoldRing" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#B8860B"/>
+      <stop offset="40%" stop-color="#FCE1A9"/>
+      <stop offset="70%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#8B6508"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Base Floor Shadow -->
+  <ellipse cx="50" cy="91" rx="27" ry="6" fill="url(#sprayShadow)"/>
+
+  <!-- BACK CURL SEGMENTS (Looping Behind the Bottle) -->
+  <!-- Top Loop Behind: from (68, 48) wrapping behind to (30, 56) -->
+  <path d="M68 47 C76 43, 65 37, 45 42 C30 46, 25 54, 31 58" stroke="url(#curlBack)" stroke-width="5" stroke-linecap="round" fill="none"/>
+  <!-- Bottom Loop Behind: from (68, 70) wrapping behind to (31, 79) -->
+  <path d="M68 69 C77 65, 66 59, 44 64 C29 68, 25 76, 32 80" stroke="url(#curlBack)" stroke-width="5" stroke-linecap="round" fill="none"/>
+
+  <!-- Bottle Body Cylinder -->
+  <rect x="36" y="42" width="28" height="46" rx="7" fill="url(#sprayBody)"/>
+
+  <!-- Specular Reflection Stripe Down Left Edge -->
+  <rect x="39" y="43" width="3" height="44" rx="1.5" fill="#FFFFFF" opacity="0.45"/>
+  <line x1="44" y1="45" x2="44" y2="83" stroke="#FFFFFF" stroke-width="0.75" opacity="0.22"/>
+
+  <!-- Label Mini Text -->
+  <rect x="42" y="58" width="16" height="15" rx="3" fill="rgba(18,6,14,0.65)" stroke="rgba(251,55,101,0.4)" stroke-width="0.7"/>
+  <text x="50" y="65" font-family="'Outfit',sans-serif" font-size="4.2" font-weight="900" fill="#FCE1A9" text-anchor="middle">RIZOS</text>
+  <text x="50" y="70" font-family="'Outfit',sans-serif" font-size="3.2" font-weight="700" fill="#FFF" text-anchor="middle">BOUNCE</text>
+
+  <!-- FRONT CURL SEGMENTS (Looping in Front of Bottle - Dramatic 3D Spiral Effect!) -->
+  <!-- Upper Curl Sweeping Across Front: (31,58) -> (70,68) -->
+  <path d="M31 58 C42 66, 56 68, 68 69" stroke="url(#curlFront)" stroke-width="5.5" stroke-linecap="round" fill="none"/>
+  <!-- Upper Curl Specular Gleam Highlight -->
+  <path d="M35 59 C44 65, 54 67, 65 68" stroke="#FFFFFF" stroke-width="1.3" stroke-linecap="round" fill="none" opacity="0.75"/>
+
+  <!-- Lower Curl Sweeping Across Front: (32,80) -> (70,89) -->
+  <path d="M32 80 C44 87, 58 89, 70 88" stroke="url(#curlFront)" stroke-width="5" stroke-linecap="round" fill="none"/>
+  <path d="M36 81 C46 86, 56 87, 66 87" stroke="#FFFFFF" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.75"/>
+
+  <!-- Bottle Shoulder -->
+  <path d="M36 43 C36 38, 43 37, 45 37 L55 37 C57 37, 64 38, 64 43 Z" fill="url(#sprayBody)"/>
+
+  <!-- Golden Collar Ring -->
+  <rect x="43" y="32" width="14" height="6" rx="1.8" fill="url(#sprayGoldRing)"/>
+  <line x1="43" y1="35" x2="57" y2="35" stroke="#FFFFFF" stroke-width="0.8" opacity="0.6"/>
+
+  <!-- Fine Mist Sprayer Mechanism & Trigger -->
+  <!-- Actuator Cap -->
+  <rect x="45.5" y="24" width="9" height="9" rx="2" fill="url(#mistHead)"/>
+  <!-- Spray Nozzle opening Left -->
+  <rect x="42" y="26" width="4" height="4.5" rx="1" fill="#D4AF37"/>
+  <circle cx="43" cy="28.2" r="0.8" fill="#14060E"/>
+
+  <!-- Trigger Lever / Ergonomic Fin Right -->
+  <path d="M54 26 Q60 28 62 34 Q57 33 54 30 Z" fill="url(#mistHead)"/>
+
+  <!-- Botanical Mist Spray Particles Emanating from Nozzle -->
+  <ellipse cx="37" cy="27" rx="1.8" ry="1.2" fill="#FCE1A9" opacity="0.9"/>
+  <circle cx="31" cy="25" r="1.4" fill="#FFC2D4" opacity="0.85"/>
+  <circle cx="26" cy="28" r="1.6" fill="#FCE1A9" opacity="0.8"/>
+  <circle cx="22" cy="24" r="1" fill="#FFFFFF" opacity="0.9"/>
+  <circle cx="18" cy="27" r="1.3" fill="#FB3765" opacity="0.75"/>
+  <circle cx="14" cy="23" r="0.9" fill="#FCE1A9" opacity="0.7"/>
+</svg>

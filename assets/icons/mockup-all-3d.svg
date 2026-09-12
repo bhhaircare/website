@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <defs>
+    <!-- Ambient Shadow -->
+    <radialGradient id="allShadow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0.38"/>
+      <stop offset="60%" stop-color="#000000" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+    <!-- Liquid Gradient (Golden Botanical Honey & Rose) -->
+    <linearGradient id="allLiquid" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FB3765"/>
+      <stop offset="35%" stop-color="#D4AF37"/>
+      <stop offset="70%" stop-color="#B8860B"/>
+      <stop offset="100%" stop-color="#3D1326"/>
+    </linearGradient>
+    <!-- Glass Bottle Outer Fill -->
+    <linearGradient id="allGlass" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.28"/>
+      <stop offset="18%" stop-color="#FFFFFF" stop-opacity="0.08"/>
+      <stop offset="75%" stop-color="#1A0A14" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.22"/>
+    </linearGradient>
+    <!-- Metallic Rose Gold Collar -->
+    <linearGradient id="allRoseGold" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#9C6B28"/>
+      <stop offset="25%" stop-color="#FCE1A9"/>
+      <stop offset="50%" stop-color="#FFFFFF"/>
+      <stop offset="75%" stop-color="#FB3765"/>
+      <stop offset="100%" stop-color="#73112A"/>
+    </linearGradient>
+    <!-- Rubber Dropper Bulb -->
+    <radialGradient id="allBulb" cx="40%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#4A263B"/>
+      <stop offset="45%" stop-color="#26101D"/>
+      <stop offset="100%" stop-color="#12050E"/>
+    </radialGradient>
+    <!-- Droplet Glow -->
+    <radialGradient id="allDrop" cx="35%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="40%" stop-color="#FCD34D"/>
+      <stop offset="85%" stop-color="#FB3765"/>
+      <stop offset="100%" stop-color="#B91C1C"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Base Soft Cast Shadow -->
+  <ellipse cx="50" cy="91" rx="28" ry="6" fill="url(#allShadow)"/>
+
+  <!-- Bottle Body Glass Container -->
+  <rect x="33" y="44" width="34" height="42" rx="9" fill="#140810"/>
+  <!-- Liquid Core -->
+  <rect x="34.5" y="50" width="31" height="34.5" rx="7" fill="url(#allLiquid)"/>
+  <!-- Liquid Meniscus / Top Arc -->
+  <path d="M34.5 52 Q 50 56 65.5 52 L 65.5 50 Q 50 48 34.5 50 Z" fill="#FCE1A9" opacity="0.6"/>
+  
+  <!-- Glass Reflection Over Body -->
+  <rect x="33" y="44" width="34" height="42" rx="9" fill="url(#allGlass)"/>
+  <rect x="33" y="44" width="34" height="42" rx="9" stroke="rgba(255,255,255,0.22)" stroke-width="1.2"/>
+
+  <!-- 3D Specular Highlight Stripe Left -->
+  <path d="M36.5 48 L36.5 82 Q36.5 84 38.5 84 L39 84 L39 48 Z" fill="#FFFFFF" opacity="0.45"/>
+  <path d="M41 50 L41 78" stroke="#FFFFFF" stroke-width="0.8" stroke-linecap="round" opacity="0.25"/>
+
+  <!-- Label Badge (Mini 3D Emblem) -->
+  <rect x="42" y="60" width="16" height="18" rx="3" fill="rgba(18,6,14,0.75)" stroke="rgba(212,175,55,0.5)" stroke-width="0.8"/>
+  <text x="50" y="70" font-family="'Outfit',sans-serif" font-size="6.5" font-weight="900" fill="#FCE1A9" text-anchor="middle" letter-spacing="0.5">BH</text>
+  <line x1="45" y1="73" x2="55" y2="73" stroke="#FB3765" stroke-width="0.8"/>
+
+  <!-- Bottle Neck -->
+  <rect x="42" y="36" width="16" height="9" rx="2" fill="#2D1424" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
+  
+  <!-- Rose Gold Metallic Collar -->
+  <rect x="40" y="32" width="20" height="7" rx="2.2" fill="url(#allRoseGold)"/>
+  <!-- Collar Highlight Ring -->
+  <ellipse cx="50" cy="32" rx="10" ry="1.8" fill="#FFFFFF" opacity="0.65"/>
+  
+  <!-- Rubber Dropper Bulb -->
+  <path d="M43 32 C43 23, 44 14, 50 14 C56 14, 57 23, 57 32 Z" fill="url(#allBulb)"/>
+  <!-- Bulb Specular Highlight -->
+  <path d="M46 17 C48 16, 49 18, 48 27" stroke="#FFFFFF" stroke-width="1.2" stroke-linecap="round" opacity="0.32"/>
+
+  <!-- Suspended Glowing Honey Drop at Bottom Pipette -->
+  <circle cx="71" cy="46" r="1.5" fill="#FCE1A9" opacity="0.8"/>
+  <path d="M74 38 Q77 42 74 46 Q71 42 74 38 Z" fill="url(#allDrop)" opacity="0"/>
+  <!-- Pipette Droplet Accent Right -->
+  <ellipse cx="68" cy="80" rx="3.5" ry="4.5" fill="url(#allDrop)"/>
+  <path d="M68 73 L70 78 Q71.5 82 68 84.5 Q64.5 82 66 78 Z" fill="url(#allDrop)"/>
+  <ellipse cx="66.8" cy="79" rx="1.2" ry="1.8" fill="#FFFFFF" opacity="0.8"/>
+</svg>

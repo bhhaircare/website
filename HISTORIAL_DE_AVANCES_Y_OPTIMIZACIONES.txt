@@ -1,0 +1,142 @@
+================================================================================
+           BLACK HONEY HAIR CARE - HISTORIAL DE AVANCES Y OPTIMIZACIONES
+================================================================================
+
+Este documento registra de manera detallada todos los avances, transformaciones 
+visuales, arquitecturas tecnicas y optimizaciones de rendimiento realizadas en 
+el ecosistema e-commerce de Black Honey Hair Care (index.html y tienda.html).
+
+--------------------------------------------------------------------------------
+1. ESTRUCTURA Y JERARQUIA DE CATALOGO OFICIAL
+--------------------------------------------------------------------------------
+- Jerarquia "El Producto Siempre Primero":
+  En todas las fichas tecnicas, tarjetas de producto, modales de vista rapida 
+  (Quick View) y galerias, la imagen principal (img y posicion inicial gallery[0]) 
+  es estrictamente el frasco o botella del producto oficial.
+  Las fotos de la fundadora (Alanis Gonzalez) o de modelos de aplicacion se 
+  despliegan en las posiciones secundarias de la galeria interactiva.
+
+- Los 11 Productos Oficiales de Formula Botanica:
+  1. Shampoo nutritivo herbal (300ml) - Romero, Moringa, Guasimo y Cana.
+  2. Acondicionador 2 en 1 (300ml) - Acai, Borojo, Manteca de Cacao y Melaza.
+  3. Tratamiento nutritivo melaza de cana (300ml / 500ml) - Hidratacion profunda y brillo espejo.
+  4. Tonico herbal capilar (120ml) - Estimulacion del foliculo y control caida.
+  5. Aceite herbal macerado (60ml) - Oleos botanicos prensados en frio.
+  6. Crema para peinar - Cana & Chonta (300ml) - Definicion de rizos sin peso.
+  7. Kit definicion perfecta - Crema de peinar + Acondicionador 2 en 1.
+  8. Kit Shampoo & acondicionador 2 en 1 - Duo esencial de lavado botanico.
+  9. Kit cabello sano & fuerte - Trilogia de rescate en 3 pasos.
+  10. Kit crecimiento & fortalecimiento - Ritual intensivo de 4 pasos.
+  11. Kit cabello sano & fuerte premium (con aceite) - Tratamiento integral de nutricion.
+
+- Los 8 Accesorios de Cuidado Capilar:
+  12. Travel Kit - Envases dosificadores de viaje.
+  13. Curly Brush BH - Cepillo definidor ergonomico para metodo curly.
+  14. Shampoo Brush - Cepillo masajeador de silicona medica estimulante.
+  15. Cepillo 3 Hileras - Desenredo suave sin quiebre.
+  16. Gorros de Saten - Proteccion nocturna anti-frizz.
+  17. Funda de Saten - Cuidado de la hebra y retencion de hidratacion.
+  18. Scrunchies de Saten - Sujecion suave sin maltratar.
+  19. Clips para el Cabello - Seccionado profesional durante el ritual.
+
+--------------------------------------------------------------------------------
+2. RUTINAS CAPILARES ESPECIALIZADAS
+--------------------------------------------------------------------------------
+Se implemento una seccion interactiva de 3 rutinas con desglose paso a paso:
+- Rutina 1: Crecimiento & Control Caida (Shampoo + Tonico + Aceite + Cepillo Masajeador).
+- Rutina 2: Nutricion Profunda & Brillo Espejo (Tratamiento Melaza + Acondicionador + Funda Saten).
+- Rutina 3: Definicion de Rizos Cero Frizz (Crema Cana & Chonta + Curly Brush + Gorro Saten).
+Cada tarjeta de paso cuenta con cursor interactivo y evento click para abrir la 
+Ficha Tecnica (Quick View) con su galeria completa y compra directa.
+
+--------------------------------------------------------------------------------
+3. CINEMA SHOWCASE EN ALTA DEFINICION
+--------------------------------------------------------------------------------
+- Reemplazo de Video: Se elimino el clip de baja resolucion y se integro el video 
+  oficial de Alanis Gonzalez (video_acondicionador.mp4) en Full HD con poster WebP.
+- Bisel Luxury Oscuro: Fondo #140A10 con marco sutil de cristal y reflejo superior.
+- Controles: Boton radiante de reproduccion, conmutador de sonido accesible 
+  (volume_off / volume_up) y badge de fundadora.
+- Selector de Clips HD: Pildoras interactivas (Formula 2 en 1, Definicion Rizos, 
+  Saberes & Comunidad) para alternar entre videos sin recargar la pagina.
+- Boton "Ficha" para ver detalles y "Comprar" para Checkout Express en un clic.
+
+--------------------------------------------------------------------------------
+4. IDENTIDAD DE MARCA Y REFINAMIENTO DEL HERO
+--------------------------------------------------------------------------------
+- Elevacion de Marca: Se elimino el tag local de ciudad (CALI) del badge superior 
+  del Hero principal, adoptando una identidad de lujo internacional:
+  "LINEA CAPILAR PREMIUM · FORMULAS BOTANICAS".
+- Proyeccion Global: Soporte para envios activos a Colombia, Canada y Estados Unidos, 
+  integrando selector multimoneda (COP, CAD, USD) con actualizacion dinamica de precios.
+- Copy Editorial enfocado en beneficios botanicos: melaza pura, oleos ancestrales, 
+  brillo espejo reflectivo y cero frizz.
+
+--------------------------------------------------------------------------------
+5. ARMONIZACION VISUAL DE LA TIENDA OFICIAL
+--------------------------------------------------------------------------------
+- Calibracion de Proporciones: Se sincronizo en tienda.html la regla de zoom al 90% 
+  en pantallas de escritorio, logrando paridad visual con la landing page y eliminando 
+  saltos bruscos de escala.
+- Hero de Tienda con paddings compactos y tipografia balanceada.
+- Filtros por categorias funcionales (Todos, Lavado, Tratamientos, Kits, Accesorios).
+
+--------------------------------------------------------------------------------
+6. MOTOR DE CHECKOUT EXPRESS Y AUTOMATIZACION WHATSAPP
+--------------------------------------------------------------------------------
+- Carrito Deslizable (Bag Drawer): Barra de progreso para envio gratis, contador de 
+  articulos y calculo dinamico de subtotal, descuento y total.
+- Modal de Checkout Integrado con seleccion de transportadoras colombianas:
+  Coordinadora (2-4 dias), Interrapidisimo (1-3 dias), Servientrega (2-5 dias), 
+  Mensajeria Local Cali (Mismo dia) y Recogida en Sede (1 hora).
+- Generacion automatica de mensaje estructurado a WhatsApp (573165423955) con el 
+  desglose de productos, transportadora elegida y total liquidado.
+
+--------------------------------------------------------------------------------
+7. SISTEMA DE RASTREO GPS SATELITAL (QUIET LUXURY MINIMALISTA)
+--------------------------------------------------------------------------------
+- Paleta Dual-Tone: Superficie en carbon mate (#141114 a #0C0A0D) con un unico acento 
+  refinado en oro champagne (#D4AF37) y tipografia en blanco hueso (#F5F2EC).
+- Mapa Vectorial Arquitectonico: Cuadricula milimetrica discreta al 1.8% de opacidad, 
+  siluetas de manzanas urbanas y areas verdes atenuadas en escala de sombras.
+- Trazado fino de ruta en oro champagne (2px) con pulsacion punteada translucida.
+- Stepper Lineal Conectado: Linea conectora ultrafina de 1.5px con nodos pasados 
+  traslucidos, nodo activo resaltado en oro champagne (Despachado 02) y nodos futuros 
+  atenuados.
+- Tarjeta de Estado con boton de un clic "Copiar Guia" y enlace a WhatsApp.
+
+--------------------------------------------------------------------------------
+8. AUDITORIA, LIMPIEZA DE CODIGO Y ULTRA-OPTIMIZACION
+--------------------------------------------------------------------------------
+- Formatos WebP en Logotipos: Reemplazo de .png pesados por .webp (ahorro de >250 KB).
+- Carga Diferida (loading="lazy"): Implementado en todas las imagenes fuera de pantalla.
+- Priorizacion Critica (fetchpriority="high" y loading="eager"): En el Hero principal.
+- Eliminacion de Rutas 404: 14 nombres de archivo de galeria corregidos con archivos reales.
+- Preload de Video Eficiente: preload="none" en los 7 videos con poster WebP liviano.
+- Eliminacion de Codigo Muerto: Retiro de metodos prototipo antiguos.
+- Depuracion de Archivos: Eliminacion de mas de 266 scripts de prueba y capturas 
+  temporales, liberando mas de 23 MB en el repositorio.
+- Cero Dependencias Externas Lentas: React 18 y ReactDOM servidos localmente en assets/.
+
+--------------------------------------------------------------------------------
+9. RESUMEN DE ARCHIVOS Y ENTORNO LIMPIO
+--------------------------------------------------------------------------------
+Black Honey Hair Care Ecommerce/
+├── index.html                                -> Pagina principal / Landing y Tienda
+├── tienda.html                               -> Catalogo completo de la tienda oficial
+├── support.js                                -> Motor reactivo y componentes <x-dc>
+├── server.js                                 -> Servidor de desarrollo local (puerto 8081)
+├── walkthrough.md                            -> Bitacora tecnica de cambios
+├── HISTORIAL_DE_AVANCES_Y_OPTIMIZACIONES.md  -> Registro historico en Markdown
+├── HISTORIAL_DE_AVANCES_Y_OPTIMIZACIONES.txt -> Registro historico en texto plano
+├── assets/                                   -> Recursos visuales WebP, videos HD y librerias
+│   ├── products_bh/                          -> Inventario oficial de fotos por producto
+│   ├── videos/                               -> Clips Full HD de la fundadora con poster WebP
+│   ├── react.production.min.js               -> React 18 local
+│   ├── react-dom.production.min.js           -> ReactDOM 18 local
+│   └── seamless-nav.js                       -> Script de transiciones suaves de navegacion
+└── scratch/                                  -> Entorno de validacion y pruebas automáticas
+
+================================================================================
+Ultima actualizacion: Septiembre 2026 - Black Honey Hair Care E-Commerce PRO.
+================================================================================
