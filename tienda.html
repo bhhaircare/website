@@ -4811,6 +4811,7 @@ async function bhFetchLiveProducts() {
 
       return {
         id: meta.frontend_id || row.handle,
+        handle: row.handle,
         img: images[0] ? images[0].url : '',
         gallery: images.map(im => im.url),
         modelImg: images[1] ? images[1].url : (images[0] ? images[0].url : ''),
@@ -4906,6 +4907,14 @@ class Component extends DCLogic {
         PRODUCTS.push(...liveProducts);
         this.setState({});
       }
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const pParam = urlParams.get('p');
+        if (pParam) {
+          const target = PRODUCTS.find(p => p.handle === pParam || p.id === pParam);
+          if (target) this.setState({ qv: target.id, qvVar: 0, qvQty: 1, qvImg: 0 });
+        }
+      } catch(e){}
     });
 
     window.__bhApp = this;
