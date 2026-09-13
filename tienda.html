@@ -17,6 +17,17 @@
 </script>
 <script src="./support.js"></script>
 <script src="assets/seamless-nav.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script>
+  // Configuración de Supabase (proyecto Black Honey Hair Care).
+  // El anon key es seguro de exponer en el cliente: las políticas RLS
+  // del proyecto solo permiten lectura de productos con status='active'.
+  window.__BH_SUPABASE_URL = 'https://bbzqkvuwqjjlyfawryne.supabase.co';
+  window.__BH_SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJienFrdnV3cWpqbHlmYXdyeW5lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkyMjg2MzcsImV4cCI6MjEwNDgwNDYzN30.f9MiZqQvvo_Rcu2TevKWp9lnlEt9K_tXNo3F-nVijTk';
+  window.__bhSupabase = window.supabase
+    ? window.supabase.createClient(window.__BH_SUPABASE_URL, window.__BH_SUPABASE_ANON_KEY)
+    : null;
+</script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -4769,6 +4780,65 @@ const PRODUCTS = [
   }
 ];
 
+// ---------------------------------------------------------------
+// Carga en vivo desde Supabase. Si falla o no hay conexión, la tienda
+// sigue funcionando con el catálogo estático de arriba (fallback).
+// ---------------------------------------------------------------
+async function bhFetchLiveProducts() {
+  if (!window.__bhSupabase) return null;
+  try {
+    const { data, error } = await window.__bhSupabase
+      .from('products')
+      .select(`
+        handle, title_es, title_en, subtitle_es, subtitle_en,
+        description_es, description_en, usage_es, usage_en,
+        tags, metafields, position,
+        product_images ( url, alt_es, alt_en, position, is_primary ),
+        product_variants ( id, title, option1_value, sku, price, position, active )
+      `)
+      .eq('status', 'active')
+      .order('position');
+
+    if (error || !data || !data.length) return null;
+
+    return data.map(row => {
+      const meta = row.metafields || {};
+      const images = (row.product_images || []).sort((a, b) => a.position - b.position);
+      const variants = (row.product_variants || [])
+        .filter(v => v.active !== false)
+        .sort((a, b) => a.position - b.position)
+        .map(v => ({ variantId: v.id, ml: v.option1_value || v.title || 'Presentación', price: Number(v.price) || 0 }));
+
+      return {
+        id: meta.frontend_id || row.handle,
+        img: images[0] ? images[0].url : '',
+        gallery: images.map(im => im.url),
+        modelImg: images[1] ? images[1].url : (images[0] ? images[0].url : ''),
+        cat: meta.cat || 'tratamiento',
+        badge: meta.badge || null,
+        rating: meta.rating || '5.0',
+        reviews: meta.reviews || 0,
+        name: row.title_es,
+        name_en: row.title_en || row.title_es,
+        short: row.subtitle_es || row.description_es || '',
+        short_en: row.subtitle_en || row.description_en || '',
+        desc: row.description_es || '',
+        desc_en: row.description_en || '',
+        variants: variants.length ? variants : [{ ml: 'Presentación única', price: 0 }],
+        tags: row.tags || [],
+        tags_en: meta.tags_en || row.tags || [],
+        bullets: meta.bullets || [],
+        bullets_en: meta.bullets_en || [],
+        uso: row.usage_es || '',
+        uso_en: row.usage_en || ''
+      };
+    });
+  } catch (e) {
+    console.warn('[Black Honey] No se pudo cargar el catálogo en vivo, usando datos locales.', e);
+    return null;
+  }
+}
+
 class Component extends DCLogic {
   state = {
     theme:'light',
@@ -4829,6 +4899,14 @@ class Component extends DCLogic {
         });
       }
     } catch(e){}
+
+    bhFetchLiveProducts().then(liveProducts => {
+      if (liveProducts && liveProducts.length) {
+        PRODUCTS.length = 0;
+        PRODUCTS.push(...liveProducts);
+        this.setState({});
+      }
+    });
 
     window.__bhApp = this;
     window.directCheckout = (prodId, varIndex = 0, qty = 1) => {
@@ -5038,6 +5116,7 @@ class Component extends DCLogic {
       return {
         key: item.key,
         id: item.id,
+        variantId: variant.variantId || null,
         img: prod.img,
         name,
         ml: variant.ml,
@@ -5048,6 +5127,32 @@ class Component extends DCLogic {
         totalLabel: money(lineTotal, curLang)
       };
     }).filter(Boolean);
+  }
+
+  // Llama al Edge Function create-order (revalida precios/stock en el servidor).
+  // Si falla (función no desplegada, sin conexión, etc.) devuelve null y el
+  // checkout sigue con el flujo simulado como respaldo — nunca bloquea la venta.
+  async bhPlaceOrder(cartLines, extra = {}) {
+    if (!window.__bhSupabase || !window.__BH_SUPABASE_URL) return null;
+    const items = cartLines.filter(l => l.variantId).map(l => ({ variant_id: l.variantId, quantity: l.qty }));
+    if (!items.length) return null;
+    try {
+      const res = await fetch(`${window.__BH_SUPABASE_URL}/functions/v1/create-order`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${window.__BH_SUPABASE_ANON_KEY}`,
+          'apikey': window.__BH_SUPABASE_ANON_KEY,
+        },
+        body: JSON.stringify({ items, ...extra }),
+      });
+      const data = await res.json();
+      if (!res.ok) { console.warn('[Black Honey] create-order:', data.error); return null; }
+      return data; // { order_number, order_id, total }
+    } catch (e) {
+      console.warn('[Black Honey] create-order no disponible, usando flujo simulado.', e);
+      return null;
+    }
   }
 
   payWithWompi() {
@@ -5061,18 +5166,7 @@ class Component extends DCLogic {
     const shippingCost = (cartSubtotal > 0 && !hasFreeShip) ? (curLang === 'ca' ? 12 / activeLang.rate : curLang === 'en' ? 10 / activeLang.rate : 15000) : 0;
     const cartTotal = Math.max(0, cartSubtotal - cartDiscount + shippingCost);
 
-    const o = {
-      id: this.oid(),
-      lines: cartLines,
-      sub: cartSubtotal,
-      disc: cartDiscount,
-      ship: shippingCost,
-      total: cartTotal,
-      carrier: CARRIERS.find(x => x.id === this.state.carrier) || CARRIERS[0],
-      pay: { id: 'wompi', name: 'Wompi Bancolombia / PSE' },
-      guide: 'WOMPI-' + Math.floor(10000000 + Math.random() * 89999999),
-      date: new Date().toLocaleString('es-CO', { dateStyle: 'medium', timeStyle: 'short' })
-    };
+    const placePromise = this.bhPlaceOrder(cartLines, { payment_provider: 'wompi' });
 
     this.setState({ isSimulating: true, simPay: 'wompi', simStep: 1 });
     setTimeout(() => {
@@ -5081,7 +5175,20 @@ class Component extends DCLogic {
     setTimeout(() => {
       this.setState({ simStep: 3 });
     }, 1500);
-    setTimeout(() => {
+    setTimeout(async () => {
+      const realOrder = await placePromise;
+      const o = {
+        id: realOrder ? realOrder.order_number : this.oid(),
+        lines: cartLines,
+        sub: realOrder ? realOrder.subtotal : cartSubtotal,
+        disc: realOrder ? realOrder.discount_total : cartDiscount,
+        ship: realOrder ? realOrder.shipping_total : shippingCost,
+        total: realOrder ? realOrder.total : cartTotal,
+        carrier: CARRIERS.find(x => x.id === this.state.carrier) || CARRIERS[0],
+        pay: { id: 'wompi', name: 'Wompi Bancolombia / PSE' },
+        guide: 'WOMPI-' + Math.floor(10000000 + Math.random() * 89999999),
+        date: new Date().toLocaleString('es-CO', { dateStyle: 'medium', timeStyle: 'short' })
+      };
       this.setState({ isSimulating: false, simStep: 1, simPay: null, order: o, co: 2, cart: [], track: 0, couponOk: false, coupon: '' });
       this.pushToast('¡Pago Aprobado!', 'Orden ' + o.id + ' procesada con éxito por Wompi', 'check_circle');
       this.startWaRedirect(o);
@@ -5099,18 +5206,7 @@ class Component extends DCLogic {
     const shippingCost = (cartSubtotal > 0 && !hasFreeShip) ? (curLang === 'ca' ? 12 / activeLang.rate : curLang === 'en' ? 10 / activeLang.rate : 15000) : 0;
     const cartTotal = Math.max(0, cartSubtotal - cartDiscount + shippingCost);
 
-    const o = {
-      id: this.oid(),
-      lines: cartLines,
-      sub: cartSubtotal,
-      disc: cartDiscount,
-      ship: shippingCost,
-      total: cartTotal,
-      carrier: CARRIERS.find(x => x.id === this.state.carrier) || CARRIERS[0],
-      pay: { id: 'nequi', name: 'Transferencia Directa Nequi' },
-      guide: 'NEQUI-' + Math.floor(10000000 + Math.random() * 89999999),
-      date: new Date().toLocaleString('es-CO', { dateStyle: 'medium', timeStyle: 'short' })
-    };
+    const placePromise = this.bhPlaceOrder(cartLines, { payment_provider: 'nequi' });
 
     this.setState({ isSimulating: true, simPay: 'nequi', simStep: 1 });
     setTimeout(() => {
@@ -5119,14 +5215,27 @@ class Component extends DCLogic {
     setTimeout(() => {
       this.setState({ simStep: 3 });
     }, 1500);
-    setTimeout(() => {
+    setTimeout(async () => {
+      const realOrder = await placePromise;
+      const o = {
+        id: realOrder ? realOrder.order_number : this.oid(),
+        lines: cartLines,
+        sub: realOrder ? realOrder.subtotal : cartSubtotal,
+        disc: realOrder ? realOrder.discount_total : cartDiscount,
+        ship: realOrder ? realOrder.shipping_total : shippingCost,
+        total: realOrder ? realOrder.total : cartTotal,
+        carrier: CARRIERS.find(x => x.id === this.state.carrier) || CARRIERS[0],
+        pay: { id: 'nequi', name: 'Transferencia Directa Nequi' },
+        guide: 'NEQUI-' + Math.floor(10000000 + Math.random() * 89999999),
+        date: new Date().toLocaleString('es-CO', { dateStyle: 'medium', timeStyle: 'short' })
+      };
       this.setState({ isSimulating: false, simStep: 1, simPay: null, order: o, co: 2, cart: [], track: 0, couponOk: false, coupon: '' });
       this.pushToast('¡Transferencia Registrada!', 'Orden ' + o.id + ' lista para despacho', 'celebration');
       this.startWaRedirect(o);
     }, 2300);
   }
 
-  sendWaOrderDirect() {
+  async sendWaOrderDirect() {
     const curLang = this.state.lang || 'es';
     const cartLines = this.getCartLinesHelper();
     const cartSubtotal = cartLines.reduce((acc, l) => acc + l.lineTotal, 0);
@@ -5136,6 +5245,8 @@ class Component extends DCLogic {
     const hasFreeShip = convertedSubtotal >= activeLang.freeShip;
     const shippingCost = (cartSubtotal > 0 && !hasFreeShip) ? (curLang === 'ca' ? 12 / activeLang.rate : curLang === 'en' ? 10 / activeLang.rate : 15000) : 0;
     const cartTotal = Math.max(0, cartSubtotal - cartDiscount + shippingCost);
+
+    this.bhPlaceOrder(cartLines, { is_cod: true, payment_provider: 'cod' });
 
     const url = this.generateWaOrder(cartLines, cartSubtotal, cartDiscount, shippingCost, cartTotal);
     window.open(url, '_blank', 'noopener,noreferrer');
