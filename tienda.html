@@ -4800,6 +4800,39 @@ const PRODUCTS = [
 // Carga en vivo desde Supabase. Si falla o no hay conexión, la tienda
 // sigue funcionando con el catálogo estático de arriba (fallback).
 // ---------------------------------------------------------------
+// ---- Referidos de afiliadas ----
+// El código llega por ?ref= y se guarda 30 días: la clienta casi nunca compra
+// en la misma visita en que abre el link que le compartieron.
+const BH_REF_KEY = 'bh_ref';
+const BH_REF_DAYS = 30;
+
+function bhGetRef() {
+  try {
+    const raw = localStorage.getItem(BH_REF_KEY);
+    if (!raw) return null;
+    const { code, ts } = JSON.parse(raw);
+    if (!code || Date.now() - ts > BH_REF_DAYS * 86400000) {
+      localStorage.removeItem(BH_REF_KEY);
+      return null;
+    }
+    return code;
+  } catch { return null; }
+}
+
+function bhCaptureRef() {
+  const code = new URLSearchParams(location.search).get('ref');
+  if (!code) return;
+  const clean = code.trim().toUpperCase().slice(0, 32);
+  if (!/^[A-Z0-9_-]+$/.test(clean)) return;
+  try { localStorage.setItem(BH_REF_KEY, JSON.stringify({ code: clean, ts: Date.now() })); } catch {}
+  if (window.__bhSupabase) {
+    window.__bhSupabase
+      .from('affiliate_clicks')
+      .insert({ code: clean, landing_path: location.pathname, referrer: document.referrer || null })
+      .then(() => {}, () => {});
+  }
+}
+
 async function bhFetchLiveProducts() {
   if (!window.__bhSupabase) return null;
   try {
@@ -4923,6 +4956,7 @@ class Component extends DCLogic {
       }
     } catch(e){}
 
+    bhCaptureRef();
     bhFetchLiveProducts().then(liveProducts => {
       if (liveProducts && liveProducts.length) {
         PRODUCTS.length = 0;
@@ -5185,6 +5219,8 @@ class Component extends DCLogic {
     if (!window.__bhSupabase || !window.__BH_SUPABASE_URL) return null;
     const items = cartLines.filter(l => l.variantId).map(l => ({ variant_id: l.variantId, quantity: l.qty }));
     if (!items.length) return null;
+    const ref = bhGetRef();
+    if (ref) extra = { ...extra, affiliate_code: ref };
     try {
       const res = await fetch(`${window.__BH_SUPABASE_URL}/functions/v1/create-order`, {
         method: 'POST',

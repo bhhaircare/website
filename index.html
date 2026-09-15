@@ -56,6 +56,25 @@
   })();
 </script>
 
+<script>
+  // Referidos de afiliadas: la landing es la que más recibe links compartidos,
+  // así que guarda el código apenas llega. La tienda lo lee al crear el pedido.
+  (function () {
+    var SUPA = 'https://bbzqkvuwqjjlyfawryne.supabase.co';
+    var ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJienFrdnV3cWpqbHlmYXdyeW5lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkyMjg2MzcsImV4cCI6MjEwNDgwNDYzN30.f9MiZqQvvo_Rcu2TevKWp9lnlEt9K_tXNo3F-nVijTk';
+    var code = new URLSearchParams(location.search).get('ref');
+    if (!code) return;
+    var clean = code.trim().toUpperCase().slice(0, 32);
+    if (!/^[A-Z0-9_-]+$/.test(clean)) return;
+    try { localStorage.setItem('bh_ref', JSON.stringify({ code: clean, ts: Date.now() })); } catch (e) {}
+    fetch(SUPA + '/rest/v1/affiliate_clicks', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', apikey: ANON, Authorization: 'Bearer ' + ANON },
+      body: JSON.stringify({ code: clean, landing_path: location.pathname, referrer: document.referrer || null })
+    }).catch(function () {});
+  })();
+</script>
+
 <link rel="dns-prefetch" href="https://app.cal.com">
 <!-- Cal.com Embed Engine -->
 <script>
