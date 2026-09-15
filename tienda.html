@@ -4810,7 +4810,8 @@ async function bhFetchLiveProducts() {
         description_es, description_en, usage_es, usage_en,
         tags, metafields, position,
         product_images ( url, alt_es, alt_en, position, is_primary ),
-        product_variants ( id, title, option1_value, sku, price, position, active )
+        product_variants ( id, title, option1_value, sku, price, position, active,
+                           inventory_levels ( available ) )
       `)
       .eq('status', 'active')
       .order('position');
@@ -4823,7 +4824,12 @@ async function bhFetchLiveProducts() {
       const variants = (row.product_variants || [])
         .filter(v => v.active !== false)
         .sort((a, b) => a.position - b.position)
-        .map(v => ({ variantId: v.id, ml: v.option1_value || v.title || 'Presentación', price: Number(v.price) || 0 }));
+        .map(v => ({
+          variantId: v.id,
+          ml: v.option1_value || v.title || 'Presentación',
+          price: Number(v.price) || 0,
+          stock: Number((v.inventory_levels || [])[0]?.available ?? 0),
+        }));
 
       return {
         id: meta.frontend_id || row.handle,
@@ -5022,16 +5028,34 @@ class Component extends DCLogic {
   addToCart(prodId, varIndex = 0, qty = 1) {
     const key = prodId + '|' + varIndex;
     const prod = PRODUCTS.find(p => p.id === prodId);
+    const variant = prod.variants[varIndex] || {};
+    const curLang = this.state.lang;
+    const name = (curLang !== 'es' && prod.name_en) ? prod.name_en : prod.name;
+
+    // `stock` solo existe cuando el catálogo vino de Supabase; si falta, se
+    // deja pasar y el pedido igual se revalida en create-order.
+    if (typeof variant.stock === 'number') {
+      const yaEnBolsa = (this.state.cart.find(i => i.key === key) || {}).qty || 0;
+      if (yaEnBolsa + qty > variant.stock) {
+        this.pushToast(
+          variant.stock > 0 ? 'Quedan pocas unidades' : 'Agotado por ahora',
+          variant.stock > 0
+            ? 'Solo quedan ' + variant.stock + ' de ' + name + '.'
+            : name + ' está agotado. Escríbenos por WhatsApp y te avisamos apenas vuelva.',
+          'error_outline', false
+        );
+        return;
+      }
+    }
+
     this.setState(s => {
       const found = s.cart.find(i => i.key === key);
-      const newCart = found 
+      const newCart = found
         ? s.cart.map(i => i.key === key ? { ...i, qty: i.qty + qty } : i)
         : [...s.cart, { key, id: prodId, vi: varIndex, qty }];
       return { cart: newCart };
     });
-    const curLang = this.state.lang;
-    const name = (curLang !== 'es' && prod.name_en) ? prod.name_en : prod.name;
-    this.pushToast('¡Añadido a tu bolsa! 🍯', name + ' (' + prod.variants[varIndex].ml + ')', 'shopping_bag');
+    this.pushToast('¡Añadido a tu bolsa! 🍯', name + ' (' + variant.ml + ')', 'shopping_bag');
   }
 
   toggleFav(prodId) {
@@ -5172,7 +5196,10 @@ class Component extends DCLogic {
         body: JSON.stringify({ items, ...extra }),
       });
       const data = await res.json();
-      if (!res.ok) { console.warn('[Black Honey] create-order:', data.error); return null; }
+      // Devolver el motivo (sin stock, cupón vencido...) en vez de null a secas:
+      // quien llama necesita distinguir "el servidor rechazó el pedido" de
+      // "no hay conexión", porque en el primer caso no se puede seguir.
+      if (!res.ok) { console.warn('[Black Honey] create-order:', data.error); return { error: data.error || 'No se pudo crear el pedido.' }; }
       return data; // { order_number, order_id, total }
     } catch (e) {
       console.warn('[Black Honey] create-order no disponible, usando flujo simulado.', e);
@@ -5202,6 +5229,11 @@ class Component extends DCLogic {
     }, 1500);
     setTimeout(async () => {
       const realOrder = await placePromise;
+      if (realOrder && realOrder.error) {
+        this.setState({ isSimulating: false, simStep: 1, simPay: null });
+        this.pushToast('No pudimos tomar el pedido', realOrder.error, 'error_outline', false);
+        return;
+      }
       const o = {
         id: realOrder ? realOrder.order_number : this.oid(),
         lines: cartLines,
@@ -5242,6 +5274,11 @@ class Component extends DCLogic {
     }, 1500);
     setTimeout(async () => {
       const realOrder = await placePromise;
+      if (realOrder && realOrder.error) {
+        this.setState({ isSimulating: false, simStep: 1, simPay: null });
+        this.pushToast('No pudimos tomar el pedido', realOrder.error, 'error_outline', false);
+        return;
+      }
       const o = {
         id: realOrder ? realOrder.order_number : this.oid(),
         lines: cartLines,
@@ -5271,7 +5308,14 @@ class Component extends DCLogic {
     const shippingCost = (cartSubtotal > 0 && !hasFreeShip) ? (curLang === 'ca' ? 12 / activeLang.rate : curLang === 'en' ? 10 / activeLang.rate : 15000) : 0;
     const cartTotal = Math.max(0, cartSubtotal - cartDiscount + shippingCost);
 
-    this.bhPlaceOrder(cartLines, { is_cod: true, payment_provider: 'cod' });
+    // Hay que esperar: si el pedido se rechaza (por ejemplo, sin stock) no se
+    // puede mandar a la clienta a WhatsApp, porque quedaría un pedido acordado
+    // por chat que no existe en el panel.
+    const realOrder = await this.bhPlaceOrder(cartLines, { is_cod: true, payment_provider: 'cod' });
+    if (realOrder && realOrder.error) {
+      this.pushToast('No pudimos tomar el pedido', realOrder.error, 'error_outline', false);
+      return;
+    }
 
     const url = this.generateWaOrder(cartLines, cartSubtotal, cartDiscount, shippingCost, cartTotal);
     window.open(url, '_blank', 'noopener,noreferrer');
