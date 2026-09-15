@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+Disallow: /scratch/
+Disallow: /server.js
+Disallow: /support.js
+
+Sitemap: https://blackhoneyhaircare.com/sitemap.xml

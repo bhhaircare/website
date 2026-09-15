@@ -8,7 +8,7 @@
 (function() {
   'use strict';
 
-  var PREFETCH_PAGES = ['index.html', 'tienda.html', 'academia.html'];
+  var PREFETCH_PAGES = ['index.html', 'tienda.html'];
   var prefetched = new Set();
   var isNavigating = false;
 

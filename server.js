@@ -26,9 +26,28 @@ const MIMES = {
 
 const COMPRESSIBLE = new Set(['.html', '.js', '.json', '.css', '.svg']);
 
+// Resuelve una ruta pedida dentro de ROOT. Devuelve null si el resultado
+// se sale de ROOT (path traversal) o si la ruta no es decodificable.
+function safeResolve(reqPath) {
+  let decoded;
+  try {
+    decoded = decodeURIComponent(reqPath);
+  } catch {
+    return null;
+  }
+  if (decoded.includes('\0')) return null;
+  const normalized = path.posix.normalize('/' + decoded.replace(/\\/g, '/'));
+  // Nada de archivos/carpetas ocultos: .git, .env, .claude...
+  if (normalized.split('/').some((seg) => seg.startsWith('.') && seg !== '')) return null;
+  const resolved = path.resolve(ROOT, '.' + normalized);
+  if (resolved !== ROOT && !resolved.startsWith(ROOT + path.sep)) return null;
+  return resolved;
+}
+
 function handleRequest(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, HEAD, OPTIONS');
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
 
   if (req.method === 'OPTIONS') {
     res.writeHead(204);
@@ -36,7 +55,13 @@ function handleRequest(req, res) {
     return;
   }
 
-  let reqPath = decodeURIComponent(req.url.split('?')[0]);
+  if (req.method !== 'GET' && req.method !== 'HEAD') {
+    res.writeHead(405, { 'Content-Type': 'text/plain; charset=utf-8', 'Allow': 'GET, HEAD, OPTIONS' });
+    res.end('405 Method Not Allowed');
+    return;
+  }
+
+  const reqPath = req.url.split('?')[0];
   let filePath = null;
 
   // Rutas amigables
@@ -45,12 +70,18 @@ function handleRequest(req, res) {
   } else if (reqPath === '/tienda' || reqPath === '/tienda.html' || reqPath === '/catalogo') {
     filePath = path.join(ROOT, 'tienda.html');
   } else {
-    let p = path.join(ROOT, reqPath);
-    if (fs.existsSync(p) && fs.statSync(p).isDirectory()) {
-      p = path.join(p, 'index.html');
+    const p = safeResolve(reqPath);
+    if (p === null) {
+      res.writeHead(403, { 'Content-Type': 'text/plain; charset=utf-8' });
+      res.end('403 Forbidden');
+      return;
     }
-    if (fs.existsSync(p) && fs.statSync(p).isFile()) {
-      filePath = p;
+    let candidate = p;
+    if (fs.existsSync(candidate) && fs.statSync(candidate).isDirectory()) {
+      candidate = path.join(candidate, 'index.html');
+    }
+    if (fs.existsSync(candidate) && fs.statSync(candidate).isFile()) {
+      filePath = candidate;
     } else if (fs.existsSync(p + '.html') && fs.statSync(p + '.html').isFile()) {
       filePath = p + '.html';
     }
@@ -66,9 +97,19 @@ function handleRequest(req, res) {
   const ext = path.extname(filePath).toLowerCase();
   const contentType = MIMES[ext] || 'application/octet-stream';
 
-  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
-  res.setHeader('Pragma', 'no-cache');
-  res.setHeader('Expires', '0');
+  // El HTML se revalida siempre para que un deploy se vea de inmediato; los
+  // assets (imágenes, video, fuentes) se cachean fuerte porque no cambian.
+  if (ext === '.html') {
+    res.setHeader('Cache-Control', 'no-cache');
+  } else {
+    res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+  }
+  res.setHeader('ETag', `"${stat.size}-${stat.mtimeMs}"`);
+  if (req.headers['if-none-match'] === `"${stat.size}-${stat.mtimeMs}"`) {
+    res.writeHead(304);
+    res.end();
+    return;
+  }
 
   // Soporte Range para video streaming (.mp4)
   const range = req.headers.range;
@@ -110,13 +151,22 @@ function handleRequest(req, res) {
   fs.createReadStream(filePath).pipe(res);
 }
 
-const targetPorts = [8081, 8080, 5000];
+// En producción (Docker/EasyPanel) se usa un único puerto vía PORT. En local se
+// abren varios para no chocar con otros procesos.
+const targetPorts = process.env.PORT ? [Number(process.env.PORT)] : [8081, 8080, 5000];
+let listening = 0;
+
 targetPorts.forEach(port => {
   const s = http.createServer(handleRequest);
   s.listen(port, '0.0.0.0', () => {
+    listening++;
     console.log(`[Black Honey Server] Activo en http://localhost:${port}/ y http://127.0.0.1:${port}/`);
   });
   s.on('error', (err) => {
-    // Puerto ocupado, omitir silenciosamente
+    console.error(`[Black Honey Server] No se pudo escuchar en ${port}: ${err.code}`);
+    if (listening === 0 && port === targetPorts[targetPorts.length - 1]) {
+      console.error('[Black Honey Server] Ningún puerto disponible, saliendo.');
+      process.exit(1);
+    }
   });
 });
